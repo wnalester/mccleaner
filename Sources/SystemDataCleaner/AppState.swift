@@ -5,12 +5,16 @@ import AppKit
 
 @MainActor
 final class AppState: ObservableObject {
-    @Published var phase: AppPhase = .welcome
+    @Published var phase: AppPhase = Legal.hasAcceptedCurrentTerms ? .welcome : .termsGate
     @Published var categories: [CleanupCategory] = CategoryDefinitions.all()
     @Published var fullDiskAccessGranted: Bool = FullDiskAccess.isGranted()
     @Published var lastResults: [CleanupResult] = []
     @Published var showAdvancedAcknowledgement = false
     @Published var advancedAcknowledged = false
+    /// Required before every single cleanup, regardless of risk tier — the user confirming
+    /// they, personally, reviewed and chose what's about to be removed. Reset each time the
+    /// confirmation sheet opens, so it's a fresh acknowledgment each run, not a one-time thing.
+    @Published var responsibilityAcknowledged = false
 
     private var categoryObservers = Set<AnyCancellable>()
 
@@ -63,6 +67,7 @@ final class AppState: ObservableObject {
         if !nonSafeSelections.isEmpty && !advancedAcknowledged {
             showAdvancedAcknowledgement = true
         }
+        responsibilityAcknowledged = false
         phase = .confirming
     }
 

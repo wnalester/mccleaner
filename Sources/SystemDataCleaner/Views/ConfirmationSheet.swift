@@ -97,6 +97,16 @@ struct ConfirmationSheet: View {
                 }
             }
 
+            VStack(alignment: .leading, spacing: 10) {
+                Divider()
+                Toggle(isOn: $appState.responsibilityAcknowledged) {
+                    Text("I chose everything above myself. I understand SDC and its developer are not responsible for any data loss or damage from this cleanup, and that this charge is final once the cleanup runs.")
+                        .font(.caption)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .toggleStyle(.checkbox)
+            }
+
             HStack {
                 Button("Cancel") { appState.phase = .results }
                 Spacer()
@@ -107,12 +117,16 @@ struct ConfirmationSheet: View {
                         .font(.system(.body, design: .rounded)).bold()
                         .padding(.horizontal, 14).padding(.vertical, 8)
                 }
-                .buttonStyle(.gradientProminent(enabled: nonSafe.isEmpty || appState.advancedAcknowledged))
-                .disabled(!nonSafe.isEmpty && !appState.advancedAcknowledged)
+                .buttonStyle(.gradientProminent(enabled: canConfirm))
+                .disabled(!canConfirm)
             }
         }
         .padding(24)
-        .frame(width: 520, height: 560)
+        .frame(width: 520, height: 620)
+    }
+
+    private var canConfirm: Bool {
+        appState.responsibilityAcknowledged && (nonSafe.isEmpty || appState.advancedAcknowledged)
     }
 
     private func tierColor(_ tier: RiskTier) -> Color {

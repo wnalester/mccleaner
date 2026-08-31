@@ -6,6 +6,8 @@ struct RootView: View {
     var body: some View {
         Group {
             switch appState.phase {
+            case .termsGate:
+                TermsGateView()
             case .welcome:
                 WelcomeView()
             case .scanning(let text):
@@ -28,6 +30,7 @@ struct RootView: View {
 
     private var phaseKey: Int {
         switch appState.phase {
+        case .termsGate: return -1
         case .welcome: return 0
         case .scanning: return 1
         case .results, .confirming: return 2

@@ -145,6 +145,9 @@ final class CleanupCategory: Identifiable, ObservableObject ,ConfigurableCategor
 protocol ConfigurableCategory: AnyObject {}
 
 enum AppPhase: Equatable {
+    /// Blocking gate shown before anything else until the current Terms of Use version has
+    /// been explicitly accepted. See Legal.swift.
+    case termsGate
     case welcome
     case scanning(progressText: String)
     case results
