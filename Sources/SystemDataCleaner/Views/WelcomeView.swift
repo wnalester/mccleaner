@@ -29,7 +29,7 @@ struct WelcomeView: View {
                         appState.startScan()
                     } label: {
                         Text("Scan My Mac")
-                            .font(.system(.headline, design: .rounded))
+                            .font(.appDisplay(.headline))
                             .frame(maxWidth: 260)
                             .padding(.vertical, 10)
                     }
@@ -56,15 +56,15 @@ struct WelcomeView: View {
 
             VStack(spacing: 6) {
                 Text("SDC")
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .font(.appDisplay(size: 36, weight: .bold))
                     .foregroundStyle(Theme.accentGradient)
                 Text("System Data Cleaner")
-                    .font(.system(.headline, design: .rounded))
+                    .font(.appDisplay(.headline, weight: .semibold))
                     .foregroundStyle(.secondary)
             }
 
             Text("If you've looked at About This Mac → Storage and seen a huge \u{201C}System Data\u{201D} bar, this app finds out exactly what's in it, explains it in plain English, and only removes what you approve.")
-                .font(.body)
+                .font(.appBody(.body))
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 480)
@@ -97,7 +97,7 @@ struct FullDiskAccessBanner: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
                 Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
-                Text("Full Disk Access isn't granted yet").font(.system(.headline, design: .rounded))
+                Text("Full Disk Access isn't granted yet").font(.appDisplay(.headline, weight: .semibold))
             }
             Text("Without it, some folders (like Mail and Time Machine info) will be under-counted or skipped. The app still works, but for the most complete and accurate scan:")
                 .font(.subheadline)

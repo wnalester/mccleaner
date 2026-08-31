@@ -1,26 +1,72 @@
 import Foundation
 
-/// Fill these in once the Stripe side and the verification backend are deployed. Nothing
-/// else in the payment flow needs to change — every other file reads through these two
-/// constants.
+/// The five things a user can buy (or already gets for free). Prices/titles shown here are
+/// what the UI displays; the actual charge amount lives in Stripe (the Payment Link), so if
+/// these ever drift apart, Stripe's checkout page is the one that's actually charged.
+enum CleanPlan: String, CaseIterable, Identifiable, Equatable {
+    case single
+    case pack5
+    case annual
+    case lifetime
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .single: return "Single Clean"
+        case .pack5: return "5-Clean Pack"
+        case .annual: return "Unlimited — Yearly"
+        case .lifetime: return "Unlimited — Lifetime"
+        }
+    }
+
+    var priceLabel: String {
+        switch self {
+        case .single: return "€1.99"
+        case .pack5: return "€4.99"
+        case .annual: return "€12.99/yr"
+        case .lifetime: return "€24.99"
+        }
+    }
+
+    var blurb: String {
+        switch self {
+        case .single: return "One cleanup, right now."
+        case .pack5: return "Five cleanups, use them whenever you like — no expiry."
+        case .annual: return "Unlimited cleanups for a year."
+        case .lifetime: return "Unlimited cleanups, forever. Launch pricing — won't last."
+        }
+    }
+
+    var badge: String? {
+        switch self {
+        case .annual: return "Best value"
+        case .lifetime: return "Launch offer"
+        default: return nil
+        }
+    }
+
+    /// A Stripe Payment Link for this plan. Create one per plan in the Stripe Dashboard
+    /// (Product → matching price → Payment Link) and replace each REPLACE_ME — see
+    /// ~/Projects/SDCPaymentBackend/README.md for the full walkthrough, including which
+    /// price ID env var on the backend has to match which plan.
+    var paymentLinkURL: URL {
+        switch self {
+        case .single: return URL(string: "https://buy.stripe.com/REPLACE_ME_SINGLE")!
+        case .pack5: return URL(string: "https://buy.stripe.com/REPLACE_ME_PACK5")!
+        case .annual: return URL(string: "https://buy.stripe.com/REPLACE_ME_ANNUAL")!
+        case .lifetime: return URL(string: "https://buy.stripe.com/REPLACE_ME_LIFETIME")!
+        }
+    }
+}
+
 enum PurchaseConfig {
-    /// A Stripe Payment Link for a single one-time €1.99 charge. Create it in the Stripe
-    /// Dashboard: Product "SDC Cleanup" → one-time price €1.99 → Payment Link. Set that
-    /// Payment Link's "After payment" confirmation to redirect to:
-    ///   <verifyBaseURL>/thanks?session_id={CHECKOUT_SESSION_ID}
-    static let paymentLinkURL = URL(string: "https://buy.stripe.com/REPLACE_ME")!
-
-    /// Base URL of the deployed verification backend (~/Projects/SDCPaymentBackend — a tiny
-    /// Vercel serverless function, already deployed). It safely refuses every request until
-    /// STRIPE_SECRET_KEY is set in the Vercel project's environment variables — see that
-    /// project's README.md for the full Stripe + Vercel setup steps.
+    /// Base URL of the deployed verification backend (~/Projects/SDCPaymentBackend).
     static let verifyBaseURL = URL(string: "https://sdc-payment-backend.vercel.app")!
-
-    static let priceLabel = "€1.99"
 }
 
 enum PurchaseVerificationResult {
-    case verified
+    case verified(plan: CleanPlan, subscriptionID: String?, subscriptionActiveUntil: Date?)
     case notPaid
     case alreadyRedeemed
     case wrongItem
@@ -30,15 +76,21 @@ enum PurchaseVerificationResult {
         switch self {
         case .verified: return ""
         case .notPaid: return "That payment hasn't gone through yet. If you completed checkout, wait a moment and try again."
-        case .alreadyRedeemed: return "That payment was already used for an earlier cleanup — each €1.99 charge covers one cleanup run."
-        case .wrongItem: return "That doesn't look like a payment for an SDC cleanup."
+        case .alreadyRedeemed: return "That payment was already used."
+        case .wrongItem: return "That doesn't look like a payment for an SDC plan."
         case .networkError(let message): return "Couldn't verify the payment (\(message)). Check your connection and try again."
         }
     }
 }
 
+enum SubscriptionCheckResult {
+    case active(until: Date)
+    case inactive
+    case networkError(String)
+}
+
 /// Talks to the verification backend so the app never has to hold a Stripe secret key
-/// itself — that key only ever lives server-side. See PaymentBackend/api/verify-session.js.
+/// itself — that key only ever lives server-side.
 enum PurchaseVerifier {
     static func verify(sessionID: String) async -> PurchaseVerificationResult {
         var request = URLRequest(url: PurchaseConfig.verifyBaseURL.appendingPathComponent("api/verify-session"))
@@ -57,11 +109,46 @@ enum PurchaseVerifier {
         guard let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             return .networkError("unreadable response from server")
         }
-        if (obj["ok"] as? Bool) == true { return .verified }
+        if (obj["ok"] as? Bool) == true {
+            guard let planRaw = obj["plan"] as? String, let plan = CleanPlan(rawValue: planRaw) else {
+                return .networkError("server returned an unrecognized plan")
+            }
+            let subID = obj["subscriptionId"] as? String
+            var until: Date? = nil
+            if let epoch = obj["currentPeriodEnd"] as? NSNumber {
+                until = Date(timeIntervalSince1970: epoch.doubleValue)
+            }
+            return .verified(plan: plan, subscriptionID: subID, subscriptionActiveUntil: until)
+        }
         switch obj["error"] as? String {
         case "already_redeemed": return .alreadyRedeemed
         case "unexpected_price": return .wrongItem
         default: return .notPaid
         }
+    }
+
+    /// Re-checks an existing subscription's status — used when our locally-cached expiry
+    /// date has passed, to distinguish "renewed" (new, later date) from "actually canceled."
+    static func checkSubscription(subscriptionID: String) async -> SubscriptionCheckResult {
+        var request = URLRequest(url: PurchaseConfig.verifyBaseURL.appendingPathComponent("api/check-subscription"))
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: ["subscription_id": subscriptionID])
+        request.timeoutInterval = 20
+
+        let data: Data
+        do {
+            (data, _) = try await URLSession.shared.data(for: request)
+        } catch {
+            return .networkError(error.localizedDescription)
+        }
+        guard let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return .networkError("unreadable response from server")
+        }
+        let active = (obj["active"] as? Bool) ?? false
+        if active, let epoch = obj["currentPeriodEnd"] as? NSNumber {
+            return .active(until: Date(timeIntervalSince1970: epoch.doubleValue))
+        }
+        return .inactive
     }
 }

@@ -8,7 +8,11 @@ let package = Package(
         .executableTarget(
             name: "SystemDataCleaner",
             path: "Sources/SystemDataCleaner",
-            resources: [.copy("Resources/AppIcon.png")]
+            resources: [
+                .copy("Resources/AppIcon.png"),
+                .copy("Resources/Fonts/BricolageGrotesque.ttf"),
+                .copy("Resources/Fonts/HankenGrotesk.ttf"),
+            ]
         )
     ]
 )

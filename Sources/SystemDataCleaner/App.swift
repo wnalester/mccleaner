@@ -7,6 +7,7 @@ struct SystemDataCleanerApp: App {
 
     init() {
         NSApplication.shared.setActivationPolicy(.regular)
+        _ = FontRegistration.isRegistered // register bundled fonts before any view renders
     }
 
     var body: some Scene {

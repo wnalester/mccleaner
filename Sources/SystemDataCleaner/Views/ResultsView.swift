@@ -31,7 +31,7 @@ struct ResultsView: View {
         HStack {
             AppLogoImage(size: 40)
             VStack(alignment: .leading, spacing: 4) {
-                Text("Here's what's in your System Data").font(.system(.title2, design: .rounded)).bold()
+                Text("Here's what's in your System Data").font(.appDisplay(.title2))
                 Text("\(Sizes.format(appState.totalFoundSize)) found across \(appState.categories.filter { !$0.items.isEmpty }.count) categories. Nothing is selected yet — pick what you'd like to clean below.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -50,7 +50,7 @@ struct ResultsView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 6) {
                     Image(systemName: tierSymbol(tier)).foregroundStyle(tierColor(tier))
-                    Text(tier.label).font(.system(.title3, design: .rounded)).bold()
+                    Text(tier.label).font(.appDisplay(.title3))
                     Text("— \(tier.shortBlurb)").font(.caption).foregroundStyle(.secondary)
                 }
                 ForEach(cats) { category in
@@ -80,7 +80,7 @@ struct ResultsView: View {
         HStack {
             if appState.hasAnySelection {
                 Text("\(appState.totalSelectedCount) item(s) selected — \(Sizes.format(appState.totalSelectedSize))")
-                    .font(.system(.headline, design: .rounded))
+                    .font(.appDisplay(.headline, weight: .semibold))
             } else {
                 Text("Nothing selected yet").font(.subheadline).foregroundStyle(.secondary)
             }
@@ -89,7 +89,7 @@ struct ResultsView: View {
                 appState.requestClean()
             } label: {
                 Text("Review & Clean Selected…")
-                    .font(.system(.headline, design: .rounded))
+                    .font(.appDisplay(.headline))
                     .padding(.horizontal, 16).padding(.vertical, 8)
             }
             .buttonStyle(.gradientProminent(enabled: appState.hasAnySelection))

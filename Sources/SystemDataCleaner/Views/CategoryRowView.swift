@@ -50,7 +50,7 @@ struct CategoryRowView: View {
 
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
-                    Text(category.name).font(.system(.headline, design: .rounded))
+                    Text(category.name).font(.appDisplay(.headline, weight: .semibold))
                     tierBadge
                 }
                 Text(category.shortDescription)
@@ -66,7 +66,7 @@ struct CategoryRowView: View {
                     .foregroundStyle(.secondary)
             } else {
                 VStack(alignment: .trailing, spacing: 2) {
-                    Text(Sizes.format(category.totalSize)).font(.system(.subheadline, design: .rounded)).bold()
+                    Text(Sizes.format(category.totalSize)).font(.appDisplay(.subheadline))
                     if category.someSelected || category.allSelected {
                         Text("\(category.selectedIDs.count) selected").font(.caption2).foregroundStyle(Theme.accent)
                     }
@@ -139,7 +139,7 @@ struct CategoryRowView: View {
     private func manualPanel(instructions: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("This one needs one manual step", systemImage: "hand.point.right.fill")
-                .font(.system(.subheadline, design: .rounded)).bold()
+                .font(.appDisplay(.subheadline))
                 .foregroundStyle(Theme.accent)
             Text(instructions)
                 .font(.caption)
@@ -194,7 +194,7 @@ struct CategoryRowView: View {
 
     private var tierBadge: some View {
         Label(category.tier.label, systemImage: tierSymbol)
-            .font(.system(.caption2, design: .rounded)).bold()
+            .font(.appDisplay(.caption2))
             .padding(.horizontal, 7).padding(.vertical, 3)
             .background(Capsule().fill(tierColor.opacity(0.15)))
             .foregroundStyle(tierColor)

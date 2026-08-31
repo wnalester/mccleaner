@@ -21,12 +21,12 @@ struct ConfirmationSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Confirm cleanup").font(.system(.title2, design: .rounded)).bold()
+            Text("Confirm cleanup").font(.appDisplay(.title2))
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("You're about to clean:").font(.system(.headline, design: .rounded))
+                        Text("You're about to clean:").font(.appDisplay(.headline, weight: .semibold))
                         ForEach(selections) { category in
                             HStack {
                                 Circle().fill(tierColor(category.tier)).frame(width: 8, height: 8)
@@ -44,22 +44,22 @@ struct ConfirmationSheet: View {
                             Text(Sizes.format(appState.totalSelectedSize)).bold().foregroundStyle(Theme.accent)
                         }
                         HStack {
-                            Text("Cost to clean this up").foregroundStyle(.secondary)
+                            Text("Using").foregroundStyle(.secondary)
                             Spacer()
-                            Text(PurchaseConfig.priceLabel).bold()
+                            Text(usingLabel).bold()
                         }
                         .font(.subheadline)
                     }
                     .cardStyle(padding: 14, corner: 12)
 
-                    Text("Scanning and browsing stay free — this charge only happens if you continue past this screen.")
+                    Text("Scanning and browsing always stay free — this is the only screen where anything is used or charged.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
                     if !irreversibleItems.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
                             Label("These are permanent — not moved to Trash", systemImage: "exclamationmark.octagon.fill")
-                                .font(.system(.headline, design: .rounded))
+                                .font(.appDisplay(.headline, weight: .semibold))
                                 .foregroundStyle(.red)
                             ForEach(Array(irreversibleItems.enumerated()), id: \.offset) { _, pair in
                                 Text("• \(pair.1.displayName) (\(pair.0.name))")
@@ -76,7 +76,7 @@ struct ConfirmationSheet: View {
                     if !nonSafe.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             Label("Please read before continuing", systemImage: "exclamationmark.triangle.fill")
-                                .font(.system(.headline, design: .rounded))
+                                .font(.appDisplay(.headline, weight: .semibold))
                                 .foregroundStyle(.orange)
                             ForEach(nonSafe) { category in
                                 VStack(alignment: .leading, spacing: 2) {
@@ -113,8 +113,8 @@ struct ConfirmationSheet: View {
                 Button {
                     appState.beginPayment()
                 } label: {
-                    Text("Continue to Pay \(PurchaseConfig.priceLabel) & Clean")
-                        .font(.system(.body, design: .rounded)).bold()
+                    Text(confirmButtonLabel)
+                        .font(.appDisplay(.body))
                         .padding(.horizontal, 14).padding(.vertical, 8)
                 }
                 .buttonStyle(.gradientProminent(enabled: canConfirm))
@@ -123,6 +123,28 @@ struct ConfirmationSheet: View {
         }
         .padding(24)
         .frame(width: 520, height: 620)
+    }
+
+    private var entitlement: EntitlementStatus { appState.currentEntitlement }
+
+    private var usingLabel: String {
+        switch entitlement {
+        case .freeFirstClean: return "Free first clean"
+        case .credits(let n): return "1 of \(n) remaining credit\(n == 1 ? "" : "s")"
+        case .subscriptionActive: return "Your annual plan"
+        case .lifetime: return "Lifetime plan"
+        case .none: return "Choose a plan next"
+        }
+    }
+
+    private var confirmButtonLabel: String {
+        switch entitlement {
+        case .freeFirstClean: return "Clean Now — Your First Clean Is Free"
+        case .credits(let n): return "Clean Now — Uses 1 of \(n) Credit\(n == 1 ? "" : "s")"
+        case .subscriptionActive: return "Clean Now — Included in Your Plan"
+        case .lifetime: return "Clean Now — Included (Lifetime)"
+        case .none: return "Continue — Choose a Plan"
+        }
     }
 
     private var canConfirm: Bool {

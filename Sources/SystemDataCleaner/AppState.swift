@@ -15,6 +15,12 @@ final class AppState: ObservableObject {
     /// they, personally, reviewed and chose what's about to be removed. Reset each time the
     /// confirmation sheet opens, so it's a fresh acknowledgment each run, not a one-time thing.
     @Published var responsibilityAcknowledged = false
+    /// Bumped after anything changes local entitlement state, so views reading
+    /// `Entitlements.status()` (a plain, non-Published enum) re-render when it does.
+    @Published private var entitlementTick = 0
+    /// What actually paid for the most recently completed cleanup — set right before
+    /// `performClean()` runs, read by DoneView.
+    @Published var lastCleanBilling: CleanBillingSummary?
 
     private var categoryObservers = Set<AnyCancellable>()
 
@@ -62,6 +68,11 @@ final class AppState: ObservableObject {
         }
     }
 
+    var currentEntitlement: EntitlementStatus {
+        _ = entitlementTick // establishes the dependency so SwiftUI re-evaluates this
+        return Entitlements.status()
+    }
+
     func requestClean() {
         guard hasAnySelection else { return }
         if !nonSafeSelections.isEmpty && !advancedAcknowledged {
@@ -69,16 +80,39 @@ final class AppState: ObservableObject {
         }
         responsibilityAcknowledged = false
         phase = .confirming
+        Task {
+            await Entitlements.refreshSubscriptionIfNeeded()
+            entitlementTick += 1
+        }
     }
 
-    /// Called when the user confirms the cleanup selection. Scanning and browsing are free;
-    /// this is the one gate before anything is actually paid for.
+    /// Called when the user confirms the cleanup selection. If something's already usable
+    /// (free first clean, a credit, an active plan), spend it and clean immediately — no
+    /// Stripe involved. Otherwise send them to pick a plan.
     func beginPayment() {
-        phase = .paywall(paymentError: nil)
+        let entitlement = currentEntitlement
+        if entitlement == .none {
+            phase = .paywall(paymentError: nil)
+            return
+        }
+        lastCleanBilling = billingSummary(for: entitlement)
+        Entitlements.consumeOne()
+        entitlementTick += 1
+        performClean()
     }
 
-    func openPaymentLink() {
-        NSWorkspace.shared.open(PurchaseConfig.paymentLinkURL)
+    private func billingSummary(for entitlement: EntitlementStatus) -> CleanBillingSummary? {
+        switch entitlement {
+        case .freeFirstClean: return .freeFirstClean
+        case .credits(let n): return .usedCredit(remainingAfter: max(0, n - 1))
+        case .subscriptionActive: return .subscription
+        case .lifetime: return .lifetime
+        case .none: return nil
+        }
+    }
+
+    func openPaymentLink(for plan: CleanPlan) {
+        NSWorkspace.shared.open(plan.paymentLinkURL)
     }
 
     /// Handles the `sdc://payment-success?session_id=…` callback Stripe's hosted "thanks"
@@ -96,7 +130,11 @@ final class AppState: ObservableObject {
         Task {
             let result = await PurchaseVerifier.verify(sessionID: sessionID)
             switch result {
-            case .verified:
+            case .verified(let plan, let subID, let until):
+                Entitlements.grant(plan: plan, subscriptionID: subID, subscriptionActiveUntilDate: until)
+                lastCleanBilling = .purchased(plan)
+                Entitlements.consumeOne()
+                entitlementTick += 1
                 performClean()
             default:
                 phase = .paywall(paymentError: result.userMessage)

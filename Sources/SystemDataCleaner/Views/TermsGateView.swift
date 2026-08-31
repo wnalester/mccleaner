@@ -11,9 +11,9 @@ struct TermsGateView: View {
         VStack(spacing: 0) {
             VStack(spacing: 10) {
                 AppLogoImage(size: 56)
-                Text("Before you use SDC").font(.system(.title2, design: .rounded)).bold()
+                Text("Before you use SDC").font(.appDisplay(.title2))
                 Text(Legal.shortDisclaimer)
-                    .font(.subheadline)
+                    .font(.appBody(.subheadline))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: 520)
@@ -52,7 +52,7 @@ struct TermsGateView: View {
                         appState.phase = .welcome
                     } label: {
                         Text("I Agree & Continue")
-                            .font(.system(.headline, design: .rounded))
+                            .font(.appDisplay(.headline))
                             .padding(.horizontal, 18).padding(.vertical, 9)
                     }
                     .buttonStyle(.gradientProminent(enabled: agreed))

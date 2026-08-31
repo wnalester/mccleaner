@@ -15,7 +15,7 @@ struct RootView: View {
             case .results, .confirming:
                 ResultsView()
             case .paywall(let error):
-                PaywallView(paymentError: error)
+                PlanPickerView(paymentError: error)
             case .verifyingPayment:
                 VerifyingPaymentView()
             case .cleaning(let text):

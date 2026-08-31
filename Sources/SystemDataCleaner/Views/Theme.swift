@@ -11,6 +11,53 @@ enum Theme {
     }
 
     static let cardCorner: CGFloat = 18
+
+    /// Approximate point sizes matching macOS's system text styles, used when rendering
+    /// those same styles in a custom font (Font.custom needs an explicit size, not a style).
+    static func pointSize(for style: Font.TextStyle) -> CGFloat {
+        switch style {
+        case .largeTitle: return 30
+        case .title: return 24
+        case .title2: return 19
+        case .title3: return 16
+        case .headline: return 14
+        case .body: return 13
+        case .callout: return 12
+        case .subheadline: return 12
+        case .footnote: return 11
+        case .caption: return 11
+        case .caption2: return 10
+        @unknown default: return 13
+        }
+    }
+}
+
+extension Font {
+    /// The app's display typeface (Bricolage Grotesque) — used for headings, titles, and
+    /// buttons, everywhere the app previously used the generic `.fontDesign(.rounded)`
+    /// system font. Falls back to system rounded automatically if the bundled font somehow
+    /// failed to register.
+    static func appDisplay(_ style: Font.TextStyle, weight: Font.Weight = .bold) -> Font {
+        appDisplay(size: Theme.pointSize(for: style), weight: weight)
+    }
+
+    static func appDisplay(size: CGFloat, weight: Font.Weight = .bold) -> Font {
+        guard FontRegistration.isRegistered else {
+            return .system(size: size, weight: weight, design: .rounded)
+        }
+        return .custom("Bricolage Grotesque", size: size).weight(weight)
+    }
+
+    /// The app's body typeface (Hanken Grotesk) — used for the handful of prominent
+    /// descriptive/lede paragraphs where a distinct body face reinforces the brand; ordinary
+    /// UI copy (captions, item rows, etc.) intentionally stays on the system font, which is
+    /// what makes native controls feel native.
+    static func appBody(_ style: Font.TextStyle = .body, weight: Font.Weight = .regular) -> Font {
+        guard FontRegistration.isRegistered else {
+            return .system(style).weight(weight)
+        }
+        return .custom("Hanken Grotesk", size: Theme.pointSize(for: style)).weight(weight)
+    }
 }
 
 extension View {

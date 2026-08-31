@@ -16,16 +16,18 @@ struct DoneView: View {
                 .font(.system(size: 56))
                 .foregroundStyle(.green)
 
-            Text("All done").font(.system(.title, design: .rounded)).bold()
+            Text("All done").font(.appDisplay(.title))
 
             Text("Moved \(Sizes.format(freedBytes)) to the Trash (or removed it directly, where noted).")
                 .font(.body)
                 .multilineTextAlignment(.center)
 
-            Text("Billed \(PurchaseConfig.priceLabel) for this cleanup via Stripe.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: 460)
+            if let billingText {
+                Text(billingText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: 460)
+            }
 
             if failures > 0 {
                 VStack(spacing: 8) {
@@ -61,7 +63,7 @@ struct DoneView: View {
                         trashEmptied = true
                     } label: {
                         Text("Empty Trash Now to Free the Space")
-                            .font(.system(.headline, design: .rounded))
+                            .font(.appDisplay(.headline))
                             .padding(.horizontal, 16).padding(.vertical, 10)
                     }
                     .buttonStyle(.gradientProminent())
@@ -86,5 +88,16 @@ struct DoneView: View {
         .padding(32)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var billingText: String? {
+        switch appState.lastCleanBilling {
+        case .freeFirstClean: return "This one was free — your first cleanup with SDC."
+        case .usedCredit(let remaining): return "Used 1 credit. \(remaining) remaining."
+        case .subscription: return "Included in your annual plan."
+        case .lifetime: return "Included in your lifetime plan."
+        case .purchased(let plan): return "Billed \(plan.priceLabel) for \(plan.title) via Stripe."
+        case nil: return nil
+        }
     }
 }
