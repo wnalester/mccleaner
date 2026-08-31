@@ -12,6 +12,10 @@ struct RootView: View {
                 ScanningView(progressText: text)
             case .results, .confirming:
                 ResultsView()
+            case .paywall(let error):
+                PaywallView(paymentError: error)
+            case .verifyingPayment:
+                VerifyingPaymentView()
             case .cleaning(let text):
                 CleaningView(progressText: text)
             case .done(let freed, let failures):
@@ -19,6 +23,7 @@ struct RootView: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: phaseKey)
+        .onOpenURL { url in appState.handleIncomingURL(url) }
     }
 
     private var phaseKey: Int {
@@ -26,8 +31,10 @@ struct RootView: View {
         case .welcome: return 0
         case .scanning: return 1
         case .results, .confirming: return 2
-        case .cleaning: return 3
-        case .done: return 4
+        case .paywall: return 3
+        case .verifyingPayment: return 4
+        case .cleaning: return 5
+        case .done: return 6
         }
     }
 }

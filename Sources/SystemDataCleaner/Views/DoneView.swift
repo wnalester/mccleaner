@@ -21,6 +21,10 @@ struct DoneView: View {
             Text("Moved \(Sizes.format(freedBytes)) to the Trash (or removed it directly, where noted).")
                 .font(.body)
                 .multilineTextAlignment(.center)
+
+            Text("Billed \(PurchaseConfig.priceLabel) for this cleanup via Stripe.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
                 .frame(maxWidth: 460)
 
             if failures > 0 {

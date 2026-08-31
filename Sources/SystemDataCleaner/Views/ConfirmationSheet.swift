@@ -43,8 +43,18 @@ struct ConfirmationSheet: View {
                             Spacer()
                             Text(Sizes.format(appState.totalSelectedSize)).bold().foregroundStyle(Theme.accent)
                         }
+                        HStack {
+                            Text("Cost to clean this up").foregroundStyle(.secondary)
+                            Spacer()
+                            Text(PurchaseConfig.priceLabel).bold()
+                        }
+                        .font(.subheadline)
                     }
                     .cardStyle(padding: 14, corner: 12)
+
+                    Text("Scanning and browsing stay free — this charge only happens if you continue past this screen.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
 
                     if !irreversibleItems.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
@@ -91,9 +101,9 @@ struct ConfirmationSheet: View {
                 Button("Cancel") { appState.phase = .results }
                 Spacer()
                 Button {
-                    appState.performClean()
+                    appState.beginPayment()
                 } label: {
-                    Text("Yes, Clean This Up")
+                    Text("Continue to Pay \(PurchaseConfig.priceLabel) & Clean")
                         .font(.system(.body, design: .rounded)).bold()
                         .padding(.horizontal, 14).padding(.vertical, 8)
                 }

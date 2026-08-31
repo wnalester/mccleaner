@@ -149,6 +149,10 @@ enum AppPhase: Equatable {
     case scanning(progressText: String)
     case results
     case confirming
+    /// Scanning is always free; cleaning costs €1.99 per run, charged once for everything
+    /// selected. `paymentError` carries a message back from a failed/declined verification.
+    case paywall(paymentError: String?)
+    case verifyingPayment
     case cleaning(progressText: String)
     case done(freedBytes: Int64, failures: Int)
 }

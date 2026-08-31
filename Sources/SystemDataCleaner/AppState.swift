@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import AppKit
 
 @MainActor
 final class AppState: ObservableObject {
@@ -63,6 +64,39 @@ final class AppState: ObservableObject {
             showAdvancedAcknowledgement = true
         }
         phase = .confirming
+    }
+
+    /// Called when the user confirms the cleanup selection. Scanning and browsing are free;
+    /// this is the one gate before anything is actually paid for.
+    func beginPayment() {
+        phase = .paywall(paymentError: nil)
+    }
+
+    func openPaymentLink() {
+        NSWorkspace.shared.open(PurchaseConfig.paymentLinkURL)
+    }
+
+    /// Handles the `sdc://payment-success?session_id=…` callback Stripe's hosted "thanks"
+    /// page redirects to after checkout. Verifies server-side before ever running a clean —
+    /// the app itself never sees or trusts a Stripe secret key.
+    func handleIncomingURL(_ url: URL) {
+        guard url.scheme?.lowercased() == "sdc", url.host == "payment-success" else { return }
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let sessionID = components.queryItems?.first(where: { $0.name == "session_id" })?.value,
+              !sessionID.isEmpty else {
+            phase = .paywall(paymentError: "Missing payment confirmation — please try again.")
+            return
+        }
+        phase = .verifyingPayment
+        Task {
+            let result = await PurchaseVerifier.verify(sessionID: sessionID)
+            switch result {
+            case .verified:
+                performClean()
+            default:
+                phase = .paywall(paymentError: result.userMessage)
+            }
+        }
     }
 
     func performClean() {
