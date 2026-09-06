@@ -48,20 +48,25 @@ enum CleanPlan: String, CaseIterable, Identifiable, Equatable {
 
     /// A Stripe Payment Link for this plan. Create one per plan in the Stripe Dashboard
     /// (Product → matching price → Payment Link) and replace each REPLACE_ME — see
-    /// ~/Projects/SDCPaymentBackend/README.md for the full walkthrough, including which
+    /// ~/Projects/McCleanerPaymentBackend/README.md for the full walkthrough, including which
     /// price ID env var on the backend has to match which plan.
+    ///
+    /// NOTE: .annual is still REPLACE_ME_ANNUAL as of 2026-09-07 — the Stripe price backing
+    /// the original annual Payment Link was created as one-time, not recurring, so it needs a
+    /// new recurring price + a new Payment Link before this can be wired in. See
+    /// mccleaner_project.md memory for the full story.
     var paymentLinkURL: URL {
         switch self {
-        case .single: return URL(string: "https://buy.stripe.com/REPLACE_ME_SINGLE")!
-        case .pack5: return URL(string: "https://buy.stripe.com/REPLACE_ME_PACK5")!
+        case .single: return URL(string: "https://buy.stripe.com/3cI14n5h15WUb2Q7XO63K00")!
+        case .pack5: return URL(string: "https://buy.stripe.com/4gM00j9xhadaef27XO63K01")!
         case .annual: return URL(string: "https://buy.stripe.com/REPLACE_ME_ANNUAL")!
-        case .lifetime: return URL(string: "https://buy.stripe.com/REPLACE_ME_LIFETIME")!
+        case .lifetime: return URL(string: "https://buy.stripe.com/fZu4gz10Lclifj6a5W63K03")!
         }
     }
 }
 
 enum PurchaseConfig {
-    /// Base URL of the deployed verification backend (~/Projects/SDCPaymentBackend).
+    /// Base URL of the deployed verification backend (~/Projects/McCleanerPaymentBackend).
     static let verifyBaseURL = URL(string: "https://api.mccleaner.tech")!
 }
 
