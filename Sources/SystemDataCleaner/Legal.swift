@@ -8,14 +8,14 @@ import Foundation
 /// public — this is a solid, standard-form draft covering the bases real commercial
 /// software EULAs cover, not a guarantee against every possible claim.
 enum Legal {
-    static let termsVersion = "1.0"
+    static let termsVersion = "1.1"
 
     static let shortDisclaimer = "SDC scans your Mac, and — only if you choose, and only after you pay — deletes what you select. You are solely responsible for reviewing everything it finds and everything you select before anything runs. Back up anything important first. SDC is provided \u{201C}as is,\u{201D} with no warranty, and its developer is not liable for any data loss or damage arising from your use of it."
 
     static let fullTermsText = """
     Terms of Use — SDC (System Data Cleaner)
 
-    Last updated: 2026-08-31 · Version \(termsVersion)
+    Last updated: 2026-09-06 · Version \(termsVersion)
 
     Please read this before using SDC. By clicking "I Agree & Continue," you accept every term below.
 
@@ -47,7 +47,7 @@ enum Legal {
     These terms may be updated from time to time. A meaningful change will show this gate again before your next scan.
 
     10. Governing law
-    [To be finalized — the app's operator will specify the governing jurisdiction here before public launch.]
+    This agreement is governed by European Union law, including consumer protection and data protection legislation (such as the GDPR and the Consumer Rights Directive 2011/83/EU already referenced above), together with any additional mandatory national law of an EU member state that applies to a specific matter not already harmonized at EU level. Nothing in this section limits any mandatory consumer protection rights you have under the law of your country of residence.
 
     11. Contact
     [Support contact to be added.]
