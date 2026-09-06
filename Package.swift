@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "SystemDataCleaner",
+    name: "McCleaner",
     platforms: [.macOS(.v13)],
     targets: [
         .executableTarget(
-            name: "SystemDataCleaner",
-            path: "Sources/SystemDataCleaner",
+            name: "McCleaner",
+            path: "Sources/McCleaner",
             resources: [
                 .copy("Resources/AppIcon.png"),
                 .copy("Resources/Fonts/BricolageGrotesque.ttf"),

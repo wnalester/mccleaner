@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>SDC</string>
+    <string>McCleaner</string>
     <key>CFBundleDisplayName</key>
-    <string>SDC</string>
+    <string>McCleaner</string>
     <key>CFBundleIdentifier</key>
-    <string>com.lesterclaude.systemdatacleaner</string>
+    <string>com.lesterclaude.mccleaner</string>
     <key>CFBundleVersion</key>
     <string>1.0</string>
     <key>CFBundleShortVersionString</key>
     <string>1.0</string>
     <key>CFBundleExecutable</key>
-    <string>SystemDataCleaner</string>
+    <string>McCleaner</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundlePackageType</key>
@@ -27,17 +27,17 @@
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.utilities</string>
     <key>NSAppleEventsUsageDescription</key>
-    <string>SDC asks Finder to empty the Trash only when you click "Empty Trash Now".</string>
+    <string>McCleaner asks Finder to empty the Trash only when you click "Empty Trash Now".</string>
     <key>NSHumanReadableCopyright</key>
     <string>Personal utility app.</string>
     <key>CFBundleURLTypes</key>
     <array>
         <dict>
             <key>CFBundleURLName</key>
-            <string>com.lesterclaude.systemdatacleaner.payment</string>
+            <string>com.lesterclaude.mccleaner.payment</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>sdc</string>
+                <string>mccleaner</string>
             </array>
         </dict>
     </array>

@@ -55,7 +55,7 @@ struct WelcomeView: View {
                 .shadow(color: Theme.accent.opacity(0.35), radius: 20, x: 0, y: 10)
 
             VStack(spacing: 6) {
-                Text("SDC")
+                Text("McCleaner")
                     .font(.appDisplay(size: 36, weight: .bold))
                     .foregroundStyle(Theme.accentGradient)
                 Text("System Data Cleaner")

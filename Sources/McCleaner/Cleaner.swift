@@ -9,7 +9,7 @@ struct CleanupResult {
 
 enum Logger {
     private static var logPath: String {
-        let dir = "\(Paths.home)/Library/Logs/SystemDataCleaner"
+        let dir = "\(Paths.home)/Library/Logs/McCleaner"
         try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
         return "\(dir)/cleanup.log"
     }

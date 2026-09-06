@@ -8,7 +8,7 @@
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-APP_NAME="SDC"
+APP_NAME="McCleaner"
 OUT_DIR="$PROJECT_DIR/dist"
 APP_BUNDLE="$OUT_DIR/$APP_NAME.app"
 VERSION="${1:-}"
@@ -38,8 +38,8 @@ ditto -c -k --keepParent "$APP_BUNDLE" "$ZIP_PATH"
 echo "Publishing GitHub release $VERSION on wnalester/system-data-cleaner…"
 gh release create "$VERSION" "$ZIP_PATH" \
     --repo wnalester/system-data-cleaner \
-    --title "SDC $VERSION" \
-    --notes "SDC (System Data Cleaner) $VERSION." \
+    --title "McCleaner $VERSION" \
+    --notes "McCleaner (System Data Cleaner) $VERSION." \
     --latest
 
 echo ""

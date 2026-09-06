@@ -11,7 +11,7 @@ struct TermsGateView: View {
         VStack(spacing: 0) {
             VStack(spacing: 10) {
                 AppLogoImage(size: 56)
-                Text("Before you use SDC").font(.appDisplay(.title2))
+                Text("Before you use McCleaner").font(.appDisplay(.title2))
                 Text(Legal.shortDisclaimer)
                     .font(.appBody(.subheadline))
                     .foregroundStyle(.secondary)
@@ -38,7 +38,7 @@ struct TermsGateView: View {
 
             VStack(spacing: 14) {
                 Toggle(isOn: $agreed) {
-                    Text("I have read and agree to the Terms of Use above, including that I am solely responsible for reviewing and selecting what SDC scans and deletes, and that SDC is provided with no warranty.")
+                    Text("I have read and agree to the Terms of Use above, including that I am solely responsible for reviewing and selecting what McCleaner scans and deletes, and that McCleaner is provided with no warranty.")
                         .font(.caption)
                         .fixedSize(horizontal: false, vertical: true)
                 }

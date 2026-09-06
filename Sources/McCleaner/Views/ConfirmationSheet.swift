@@ -100,7 +100,7 @@ struct ConfirmationSheet: View {
             VStack(alignment: .leading, spacing: 10) {
                 Divider()
                 Toggle(isOn: $appState.responsibilityAcknowledged) {
-                    Text("I chose everything above myself. I understand SDC and its developer are not responsible for any data loss or damage from this cleanup, and that this charge is final once the cleanup runs.")
+                    Text("I chose everything above myself. I understand McCleaner and its developer are not responsible for any data loss or damage from this cleanup, and that this charge is final once the cleanup runs.")
                         .font(.caption)
                         .fixedSize(horizontal: false, vertical: true)
                 }

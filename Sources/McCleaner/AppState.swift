@@ -115,11 +115,11 @@ final class AppState: ObservableObject {
         NSWorkspace.shared.open(plan.paymentLinkURL)
     }
 
-    /// Handles the `sdc://payment-success?session_id=…` callback Stripe's hosted "thanks"
+    /// Handles the `mccleaner://payment-success?session_id=…` callback Stripe's hosted "thanks"
     /// page redirects to after checkout. Verifies server-side before ever running a clean —
     /// the app itself never sees or trusts a Stripe secret key.
     func handleIncomingURL(_ url: URL) {
-        guard url.scheme?.lowercased() == "sdc", url.host == "payment-success" else { return }
+        guard url.scheme?.lowercased() == "mccleaner", url.host == "payment-success" else { return }
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
               let sessionID = components.queryItems?.first(where: { $0.name == "session_id" })?.value,
               !sessionID.isEmpty else {

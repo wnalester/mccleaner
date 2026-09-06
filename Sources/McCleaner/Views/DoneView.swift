@@ -92,7 +92,7 @@ struct DoneView: View {
 
     private var billingText: String? {
         switch appState.lastCleanBilling {
-        case .freeFirstClean: return "This one was free — your first cleanup with SDC."
+        case .freeFirstClean: return "This one was free — your first cleanup with McCleaner."
         case .usedCredit(let remaining): return "Used 1 credit. \(remaining) remaining."
         case .subscription: return "Included in your annual plan."
         case .lifetime: return "Included in your lifetime plan."

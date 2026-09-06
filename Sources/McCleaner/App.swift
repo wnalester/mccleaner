@@ -2,7 +2,7 @@ import SwiftUI
 import AppKit
 
 @main
-struct SystemDataCleanerApp: App {
+struct McCleanerApp: App {
     @StateObject private var appState = AppState()
 
     init() {

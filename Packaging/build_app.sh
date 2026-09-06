@@ -1,12 +1,12 @@
 #!/bin/bash
-# Builds SystemDataCleaner and packages it into a real double-clickable .app bundle.
+# Builds McCleaner and packages it into a real double-clickable .app bundle.
 # We can't use xcodebuild here (only Xcode Command Line Tools are installed, no full
 # Xcode), so this does by hand what Xcode would otherwise do for us.
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-APP_NAME="SDC"
-BUNDLE_ID="com.lesterclaude.systemdatacleaner"
+APP_NAME="McCleaner"
+BUNDLE_ID="com.lesterclaude.mccleaner"
 OUT_DIR="$PROJECT_DIR/dist"
 APP_BUNDLE="$OUT_DIR/$APP_NAME.app"
 
@@ -14,7 +14,7 @@ echo "Building release binary…"
 cd "$PROJECT_DIR"
 swift build -c release
 
-BIN_PATH="$PROJECT_DIR/.build/release/SystemDataCleaner"
+BIN_PATH="$PROJECT_DIR/.build/release/McCleaner"
 if [ ! -f "$BIN_PATH" ]; then
     echo "Build failed: binary not found at $BIN_PATH" >&2
     exit 1
@@ -25,7 +25,7 @@ rm -rf "$APP_BUNDLE"
 mkdir -p "$APP_BUNDLE/Contents/MacOS"
 mkdir -p "$APP_BUNDLE/Contents/Resources"
 
-cp "$BIN_PATH" "$APP_BUNDLE/Contents/MacOS/SystemDataCleaner"
+cp "$BIN_PATH" "$APP_BUNDLE/Contents/MacOS/McCleaner"
 cp "$PROJECT_DIR/Packaging/Info.plist" "$APP_BUNDLE/Contents/Info.plist"
 cp "$PROJECT_DIR/Packaging/AppIcon.icns" "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
 
@@ -35,13 +35,13 @@ if [ -n "$DEVELOPER_ID" ]; then
     echo "Signing with Developer ID identity: $DEVELOPER_ID"
     codesign --force --deep --options runtime --timestamp --sign "$DEVELOPER_ID" "$APP_BUNDLE"
 
-    if xcrun notarytool history --keychain-profile "sdc-notary" >/dev/null 2>&1; then
+    if xcrun notarytool history --keychain-profile "mccleaner-notary" >/dev/null 2>&1; then
         echo "Zipping for notarization…"
         ZIP_PATH="$OUT_DIR/$APP_NAME-notarize.zip"
         ditto -c -k --keepParent "$APP_BUNDLE" "$ZIP_PATH"
 
         echo "Submitting to Apple notary service (this can take a few minutes)…"
-        xcrun notarytool submit "$ZIP_PATH" --keychain-profile "sdc-notary" --wait
+        xcrun notarytool submit "$ZIP_PATH" --keychain-profile "mccleaner-notary" --wait
 
         echo "Stapling notarization ticket…"
         xcrun stapler staple "$APP_BUNDLE"
@@ -52,12 +52,12 @@ if [ -n "$DEVELOPER_ID" ]; then
         echo "  $APP_BUNDLE"
     else
         echo ""
-        echo "Done. Signed (but NOT notarized — no 'sdc-notary' notarytool keychain profile"
+        echo "Done. Signed (but NOT notarized — no 'mccleaner-notary' notarytool keychain profile"
         echo "found) app bundle created at:"
         echo "  $APP_BUNDLE"
         echo ""
         echo "To enable notarization, run once:"
-        echo "  xcrun notarytool store-credentials sdc-notary --apple-id <you@example.com> \\"
+        echo "  xcrun notarytool store-credentials mccleaner-notary --apple-id <you@example.com> \\"
         echo "    --team-id <TEAMID> --password <app-specific-password>"
         echo "Then re-run this script."
     fi

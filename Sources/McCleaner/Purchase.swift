@@ -62,7 +62,7 @@ enum CleanPlan: String, CaseIterable, Identifiable, Equatable {
 
 enum PurchaseConfig {
     /// Base URL of the deployed verification backend (~/Projects/SDCPaymentBackend).
-    static let verifyBaseURL = URL(string: "https://sdc-payment-backend.vercel.app")!
+    static let verifyBaseURL = URL(string: "https://api.mccleaner.tech")!
 }
 
 enum PurchaseVerificationResult {
@@ -77,7 +77,7 @@ enum PurchaseVerificationResult {
         case .verified: return ""
         case .notPaid: return "That payment hasn't gone through yet. If you completed checkout, wait a moment and try again."
         case .alreadyRedeemed: return "That payment was already used."
-        case .wrongItem: return "That doesn't look like a payment for an SDC plan."
+        case .wrongItem: return "That doesn't look like a payment for an McCleaner plan."
         case .networkError(let message): return "Couldn't verify the payment (\(message)). Check your connection and try again."
         }
     }
