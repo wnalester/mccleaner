@@ -29,6 +29,15 @@ cp "$BIN_PATH" "$APP_BUNDLE/Contents/MacOS/McCleaner"
 cp "$PROJECT_DIR/Packaging/Info.plist" "$APP_BUNDLE/Contents/Info.plist"
 cp "$PROJECT_DIR/Packaging/AppIcon.icns" "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
 
+# Copy the app's bundled resources (fonts + logo artwork) flat into Contents/Resources so
+# Bundle.main can find them at runtime. These are read via Bundle.main rather than SPM's
+# Bundle.module because Bundle.module's generated accessor falls back to a hardcoded path
+# inside this machine's .build directory when the packaged McCleaner_*.bundle isn't found —
+# fine on this Mac, but a guaranteed launch-time crash on anyone else's.
+cp "$PROJECT_DIR/Sources/McCleaner/Resources/AppIcon.png" "$APP_BUNDLE/Contents/Resources/AppIcon.png"
+cp "$PROJECT_DIR/Sources/McCleaner/Resources/Fonts/BricolageGrotesque.ttf" "$APP_BUNDLE/Contents/Resources/BricolageGrotesque.ttf"
+cp "$PROJECT_DIR/Sources/McCleaner/Resources/Fonts/HankenGrotesk.ttf" "$APP_BUNDLE/Contents/Resources/HankenGrotesk.ttf"
+
 DEVELOPER_ID="$(security find-identity -v -p codesigning 2>/dev/null | grep -m1 "Developer ID Application" | sed -E 's/.*"(.*)"/\1/')"
 
 if [ -n "$DEVELOPER_ID" ]; then

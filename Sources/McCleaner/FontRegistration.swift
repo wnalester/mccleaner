@@ -10,7 +10,7 @@ enum FontRegistration {
         let names = ["BricolageGrotesque", "HankenGrotesk"]
         var allOK = true
         for name in names {
-            guard let url = Bundle.module.url(forResource: name, withExtension: "ttf") else {
+            guard let url = Bundle.main.url(forResource: name, withExtension: "ttf") else {
                 allOK = false
                 continue
             }

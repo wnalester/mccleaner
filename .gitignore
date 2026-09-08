@@ -1,3 +1,5 @@
 .build/
 dist/
 .swiftpm/
+Packaging/codesign-cert/
+.DS_Store

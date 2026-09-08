@@ -9,7 +9,7 @@ struct AppLogoImage: View {
     var size: CGFloat = 64
 
     var body: some View {
-        if let url = Bundle.module.url(forResource: "AppIcon", withExtension: "png"),
+        if let url = Bundle.main.url(forResource: "AppIcon", withExtension: "png"),
            let nsImage = NSImage(contentsOf: url) {
             Image(nsImage: nsImage)
                 .resizable()
