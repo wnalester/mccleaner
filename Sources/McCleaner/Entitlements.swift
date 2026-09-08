@@ -46,10 +46,14 @@ enum Entitlements {
 
     /// What's currently usable, checked in priority order: a paid unlimited plan beats a credit.
     static func status() -> EntitlementStatus {
+        #if QA_BUILD
+        return .lifetime
+        #else
         if hasLifetimeAccess { return .lifetime }
         if let until = subscriptionActiveUntil, until > Date() { return .subscriptionActive(until: until) }
         if cleanCredits > 0 { return .credits(remaining: cleanCredits) }
         return .none
+        #endif
     }
 
     /// If we have a subscription on file but its cached expiry has passed, check with Stripe
