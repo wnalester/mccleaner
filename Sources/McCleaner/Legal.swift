@@ -8,14 +8,14 @@ import Foundation
 /// public — this is a solid, standard-form draft covering the bases real commercial
 /// software EULAs cover, not a guarantee against every possible claim.
 enum Legal {
-    static let termsVersion = "1.3"
+    static let termsVersion = "1.4"
 
     static let shortDisclaimer = "McCleaner scans your Mac, and — only if you choose, and only after you pay — deletes what you select. You are solely responsible for reviewing everything it finds and everything you select before anything runs. Back up anything important first. McCleaner is provided \u{201C}as is,\u{201D} with no warranty, and its developer is not liable for any data loss or damage arising from your use of it."
 
     static let fullTermsText = """
     Terms of Use — McCleaner (System Data Cleaner)
 
-    Last updated: 2026-09-06 · Version \(termsVersion)
+    Last updated: 2026-09-09 · Version \(termsVersion)
 
     Please read this before using McCleaner. By clicking "I Agree & Continue," you accept every term below.
 
@@ -38,7 +38,7 @@ enum Legal {
     You agree to indemnify and hold harmless McCleaner's developer from any claim, demand, loss, or damages, including reasonable legal fees, arising out of your use of McCleaner or your violation of these terms.
 
     7. Payments and your right of withdrawal
-    Your first cleanup is free. After that, cleaning up requires either a paid credit (sold individually or in a 5-pack) or an active unlimited plan (yearly or lifetime) — pricing for all of these is shown in the app before you buy. By purchasing any of these, or by using a free or already-purchased cleanup, you expressly ask that McCleaner begin performing the requested service immediately. You acknowledge that, once a cleanup has been fully performed, you lose any statutory right of withdrawal or cooling-off period that might otherwise apply to a digital service or digital content under applicable consumer protection law (for EU consumers, this reflects Directive 2011/83/EU on consumer rights, Article 16(m)). Unused credits and unlimited-plan access are tied to this Mac and are not transferable or refundable except as required by law.
+    Scanning is always free. Cleaning up requires either a paid credit (sold individually or in a 5-pack) or an active unlimited plan (yearly or lifetime) — pricing for all of these is shown in the app before you buy. By purchasing any of these, or by using an already-purchased cleanup, you expressly ask that McCleaner begin performing the requested service immediately. You acknowledge that, once a cleanup has been fully performed, you lose any statutory right of withdrawal or cooling-off period that might otherwise apply to a digital service or digital content under applicable consumer protection law (for EU consumers, this reflects Directive 2011/83/EU on consumer rights, Article 16(m)). Unused credits and unlimited-plan access are tied to this Mac and are not transferable or refundable except as required by law.
 
     8. Your authority to use McCleaner on this computer
     You represent that you own this computer, or otherwise have full legal authority to scan and modify it — for example, that using McCleaner does not violate an employer's IT policy or any other agreement or law that applies to you.

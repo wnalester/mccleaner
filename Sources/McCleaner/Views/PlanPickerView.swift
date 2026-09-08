@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Shown when the user has no usable entitlement left (free clean already used, no credits,
-/// no active plan). Lets them buy one of the four paid options.
+/// Shown when the user has no usable entitlement (no credits, no active plan). Lets them
+/// buy one of the four paid options.
 struct PlanPickerView: View {
     @EnvironmentObject var appState: AppState
     let paymentError: String?
@@ -13,7 +13,7 @@ struct PlanPickerView: View {
 
                 VStack(spacing: 8) {
                     Text("Choose a plan").font(.appDisplay(.title2))
-                    Text("Your free first clean has already been used. Pick whichever fits how often you clean up.")
+                    Text("Pick whichever fits how often you clean up.")
                         .font(.appBody(.body))
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)

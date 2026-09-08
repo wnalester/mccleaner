@@ -87,8 +87,8 @@ final class AppState: ObservableObject {
     }
 
     /// Called when the user confirms the cleanup selection. If something's already usable
-    /// (free first clean, a credit, an active plan), spend it and clean immediately — no
-    /// Stripe involved. Otherwise send them to pick a plan.
+    /// (a credit, an active plan), spend it and clean immediately — no Stripe involved.
+    /// Otherwise send them to pick a plan.
     func beginPayment() {
         let entitlement = currentEntitlement
         if entitlement == .none {
@@ -103,7 +103,6 @@ final class AppState: ObservableObject {
 
     private func billingSummary(for entitlement: EntitlementStatus) -> CleanBillingSummary? {
         switch entitlement {
-        case .freeFirstClean: return .freeFirstClean
         case .credits(let n): return .usedCredit(remainingAfter: max(0, n - 1))
         case .subscriptionActive: return .subscription
         case .lifetime: return .lifetime

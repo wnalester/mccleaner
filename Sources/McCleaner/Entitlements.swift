@@ -1,7 +1,6 @@
 import Foundation
 
 enum EntitlementStatus: Equatable {
-    case freeFirstClean
     case credits(remaining: Int)
     case subscriptionActive(until: Date)
     case lifetime
@@ -11,7 +10,6 @@ enum EntitlementStatus: Equatable {
 /// What paid for the cleanup that's about to run (or already ran) — captured right before
 /// consuming, so DoneView can say something accurate afterward instead of a hardcoded price.
 enum CleanBillingSummary: Equatable {
-    case freeFirstClean
     case usedCredit(remainingAfter: Int)
     case subscription
     case lifetime
@@ -25,11 +23,6 @@ enum CleanBillingSummary: Equatable {
 /// something worth defending against here.
 enum Entitlements {
     private static let defaults = UserDefaults.standard
-
-    static var hasUsedFreeClean: Bool {
-        get { defaults.bool(forKey: "sdc_hasUsedFreeClean") }
-        set { defaults.set(newValue, forKey: "sdc_hasUsedFreeClean") }
-    }
 
     static var cleanCredits: Int {
         get { defaults.integer(forKey: "sdc_cleanCredits") }
@@ -51,12 +44,10 @@ enum Entitlements {
         set { defaults.set(newValue, forKey: "sdc_subscriptionActiveUntil") }
     }
 
-    /// What's currently usable, checked in priority order: a paid unlimited plan beats a
-    /// credit, a credit beats the one-time free clean.
+    /// What's currently usable, checked in priority order: a paid unlimited plan beats a credit.
     static func status() -> EntitlementStatus {
         if hasLifetimeAccess { return .lifetime }
         if let until = subscriptionActiveUntil, until > Date() { return .subscriptionActive(until: until) }
-        if !hasUsedFreeClean { return .freeFirstClean }
         if cleanCredits > 0 { return .credits(remaining: cleanCredits) }
         return .none
     }
@@ -84,7 +75,6 @@ enum Entitlements {
     static func consumeOne() {
         if hasLifetimeAccess { return }
         if let until = subscriptionActiveUntil, until > Date() { return }
-        if !hasUsedFreeClean { hasUsedFreeClean = true; return }
         if cleanCredits > 0 { cleanCredits -= 1 }
     }
 

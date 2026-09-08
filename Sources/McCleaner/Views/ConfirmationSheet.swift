@@ -129,7 +129,6 @@ struct ConfirmationSheet: View {
 
     private var usingLabel: String {
         switch entitlement {
-        case .freeFirstClean: return "Free first clean"
         case .credits(let n): return "1 of \(n) remaining credit\(n == 1 ? "" : "s")"
         case .subscriptionActive: return "Your annual plan"
         case .lifetime: return "Lifetime plan"
@@ -139,7 +138,6 @@ struct ConfirmationSheet: View {
 
     private var confirmButtonLabel: String {
         switch entitlement {
-        case .freeFirstClean: return "Clean Now — Your First Clean Is Free"
         case .credits(let n): return "Clean Now — Uses 1 of \(n) Credit\(n == 1 ? "" : "s")"
         case .subscriptionActive: return "Clean Now — Included in Your Plan"
         case .lifetime: return "Clean Now — Included (Lifetime)"
