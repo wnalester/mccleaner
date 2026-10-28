@@ -1,14 +1,5 @@
-# Pre-deploy Security Checklist (each item: link to file/test)
-- [ ] RLS on every table; tested as other tenant
-- [ ] Server-side authz on every route; IDOR test
-- [ ] Rate limits on public/costly routes (shared store)
-- [ ] No secrets in repo/front-end; .env* git-ignored, chmod 600
-- [ ] Login hardening, password policy, 2FA for admin
-- [ ] Input validation + upload limits
-- [ ] Webhooks signature-verified; idempotent
-- [ ] AI/paid API spend cap + loop guard
-- [ ] Security headers/CSP, CORS locked
-- [ ] Deps audited; no default credentials
-- [ ] security_gate.py + attacking e2e test pass
-- [ ] legal-launch-preflight passes
-- [ ] Backups + incident contact documented
+# Pre-deploy Security Checklist - McCleaner.app (macOS)
+- [x] Signed + notarized
+- [ ] Protected-path deletion tests documented
+- [ ] Review entitlements / hardened runtime
+- [ ] No telemetry without consent

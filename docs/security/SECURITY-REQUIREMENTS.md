@@ -1,15 +1,15 @@
-# Security Requirements
+# Security Requirements - McCleaner.app (macOS)
+Swift package, signed + notarized macOS cleaner; deletes user files so safety matters more than server security.
+
 ## Data classification
-| Data | Class (public/internal/PII/secret) | Where stored | Retention |
-## Authentication & authorization
-- Auth method, password policy, 2FA, session lifetime; server-side authz on every route; tenant isolation (RLS)
-## Input/output
-- Validation (schema) on all inputs; output encoding; upload type/size limits
-## Secrets & config
-- No keys in front-end; env vars list; rotation plan; no default credentials
-## Availability & cost
-- Rate limits per public/costly route; spend caps and loop guards for AI/paid APIs
-## Privacy & legal
-- GDPR basis, consent, deletion/export, cookie/analytics opt-in, messaging consent
-## Compliance targets
-- OWASP ASVS level: ; logging/audit requirements:
+| Data | Class | Where |
+|---|---|---|
+| User files scanned locally | user data | never uploaded (verify) |
+| Licence state | internal | local + Stripe backend |
+
+## Baseline requirements
+- Secrets only in env/files (chmod 600, git-ignored); no keys in front-end; no default credentials.
+- Server-side authorization for every privileged action; fail closed.
+- Rate limit public/costly endpoints (shared store on serverless); spend caps on paid APIs.
+- Privacy: consent before tracking, minimal data, deletion path; run legal-launch-preflight.
+See INVENTORY.md for auto-detected routes/env/tables.
